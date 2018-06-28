@@ -16,11 +16,9 @@
 		5EFFB37C20E4205C0011B91E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5EFFB37A20E4205C0011B91E /* Main.storyboard */; };
 		5EFFB37E20E4205D0011B91E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5EFFB37D20E4205D0011B91E /* Assets.xcassets */; };
 		5EFFB38120E4205D0011B91E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5EFFB37F20E4205D0011B91E /* LaunchScreen.storyboard */; };
-		F490FDAD024FFB96545351DF /* Pods_ChatWithImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40AC4E539324B27C1F1DADC /* Pods_ChatWithImages.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		32644F524ECDA859566B46E3 /* Pods-ChatWithImages.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatWithImages.release.xcconfig"; path = "Pods/Target Support Files/Pods-ChatWithImages/Pods-ChatWithImages.release.xcconfig"; sourceTree = "<group>"; };
 		5E03EA1220E4EB0300EAFDA1 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		5E03EA1420E4FDDC00EAFDA1 /* PictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
 		5E39FD3220E4318200DBF3C2 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -32,8 +30,6 @@
 		5EFFB37D20E4205D0011B91E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5EFFB38020E4205D0011B91E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5EFFB38220E4205D0011B91E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		82DEFBA345830B4F73B9DBDD /* Pods-ChatWithImages.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatWithImages.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ChatWithImages/Pods-ChatWithImages.debug.xcconfig"; sourceTree = "<group>"; };
-		D40AC4E539324B27C1F1DADC /* Pods_ChatWithImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatWithImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,21 +37,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F490FDAD024FFB96545351DF /* Pods_ChatWithImages.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		12B38CD19873FDC13A67CC16 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D40AC4E539324B27C1F1DADC /* Pods_ChatWithImages.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		5E73242A20E425B0001A8134 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -70,8 +57,6 @@
 			children = (
 				5EFFB37520E4205C0011B91E /* ChatWithImages */,
 				5EFFB37420E4205C0011B91E /* Products */,
-				8ACF78652889E243F9B94848 /* Pods */,
-				12B38CD19873FDC13A67CC16 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,15 +84,6 @@
 			path = ChatWithImages;
 			sourceTree = "<group>";
 		};
-		8ACF78652889E243F9B94848 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				82DEFBA345830B4F73B9DBDD /* Pods-ChatWithImages.debug.xcconfig */,
-				32644F524ECDA859566B46E3 /* Pods-ChatWithImages.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -115,11 +91,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5EFFB38520E4205D0011B91E /* Build configuration list for PBXNativeTarget "ChatWithImages" */;
 			buildPhases = (
-				CEFC10797641E9AD6E82346A /* [CP] Check Pods Manifest.lock */,
 				5EFFB36F20E4205C0011B91E /* Sources */,
 				5EFFB37020E4205C0011B91E /* Frameworks */,
 				5EFFB37120E4205C0011B91E /* Resources */,
-				540931D46A28647CBE23D082 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -175,47 +149,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		540931D46A28647CBE23D082 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-ChatWithImages/Pods-ChatWithImages-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
-				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ChatWithImages/Pods-ChatWithImages-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CEFC10797641E9AD6E82346A /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ChatWithImages-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5EFFB36F20E4205C0011B91E /* Sources */ = {
@@ -369,11 +302,10 @@
 		};
 		5EFFB38620E4205D0011B91E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 82DEFBA345830B4F73B9DBDD /* Pods-ChatWithImages.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 73FSJC7BUF;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ChatWithImages/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -390,11 +322,10 @@
 		};
 		5EFFB38720E4205D0011B91E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 32644F524ECDA859566B46E3 /* Pods-ChatWithImages.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 73FSJC7BUF;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ChatWithImages/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
