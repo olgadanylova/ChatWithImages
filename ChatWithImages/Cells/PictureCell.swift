@@ -4,7 +4,7 @@ import UIKit
 class PictureCell: UITableViewCell {
 
     @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var pivtureView: UIImageView!
+    @IBOutlet var pictureView: UIImageView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     override func awakeFromNib() {

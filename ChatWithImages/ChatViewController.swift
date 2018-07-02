@@ -18,7 +18,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         let message = ChatMessage()
         message.userName = userName
         message.messageText = "joined"
-        message.pictureUrl = ""
         Backendless.sharedInstance().messaging.publish(self.channel?.channelName, message: message, response: { messageStatus in
         }, error: { fault in
             self.showErrorAlert(fault!)
@@ -84,7 +83,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             let message = ChatMessage()
             message.userName = userName
             message.messageText = messageInputField.text
-            message.pictureUrl = ""
             publishMessage(message)
             messageInputField.text = ""
         }
@@ -102,31 +100,37 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = self.messages![indexPath.row]
-        if (!(message.messageText?.isEmpty)! && (message.pictureUrl?.isEmpty)!) {
+        if (message.messageText != nil) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath) as! MessageCell
             cell.nameLabel.text = String(format: "[%@]:", message.userName!)
             cell.messageLabel.text = message.messageText
             return cell
         }
-        else if ((message.messageText?.isEmpty)! && !(message.pictureUrl?.isEmpty)!) {
+        else if (message.pictureUrl != nil) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "PictureCell", for: indexPath) as! PictureCell
             cell.nameLabel.text = String(format: "[%@]:", message.userName!)
-            cell.pivtureView.image = nil
-            cell.activityIndicator.isHidden = false
-            cell.activityIndicator.startAnimating()
-            let url = URL(string: message.pictureUrl!)!
-            let session = URLSession(configuration: .default)
-            let downloadPictureTask = session.dataTask(with: url) { (data, response, error) in
-                if let imageData = data {
-                    let image = UIImage(data: imageData)
-                    DispatchQueue.main.async {
-                        cell.pivtureView.image = image
-                        cell.activityIndicator.isHidden = true
-                        cell.activityIndicator.stopAnimating()
+            if (message.picture != nil) {
+                cell.pictureView.image = message.picture
+            }
+            else {
+                cell.pictureView.image = nil
+                cell.activityIndicator.isHidden = false
+                cell.activityIndicator.startAnimating()
+                let url = URL(string: message.pictureUrl!)!
+                let session = URLSession(configuration: .default)
+                let downloadPictureTask = session.dataTask(with: url) { (data, response, error) in
+                    if let imageData = data {
+                        let image = UIImage(data: imageData)
+                        message.picture = image
+                        DispatchQueue.main.async {
+                            cell.pictureView.image = image
+                            cell.activityIndicator.isHidden = true
+                            cell.activityIndicator.stopAnimating()
+                        }
                     }
                 }
-            }
-            downloadPictureTask.resume()
+                downloadPictureTask.resume()
+            }      
             return cell
         }
         return UITableViewCell()
@@ -151,7 +155,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func showErrorAlert(_ fault: Fault) {
-        let alert = UIAlertController(title: String(format: "Error %@", fault.faultCode), message: fault.message, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error", message: fault.message, preferredStyle: .alert)
         let dismissButton = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
         alert.addAction(dismissButton)
         present(alert, animated: true, completion: nil)
@@ -195,7 +199,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         Backendless.sharedInstance().file.uploadFile(imagePath, content: UIImagePNGRepresentation(img), response: { uploadedPicture in
             let message = ChatMessage()
             message.userName = self.userName
-            message.messageText = ""
             message.pictureUrl = uploadedPicture?.fileURL
             self.publishMessage(message)
         }, error: { fault in

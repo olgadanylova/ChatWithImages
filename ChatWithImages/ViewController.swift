@@ -7,8 +7,6 @@ class ViewController: UIViewController {
     
     @IBOutlet var userNameTextField: UITextField!
     
-    //    let APPLICATION_ID = "751D3222-34C7-2619-FF11-4017F65BBC00"
-    //    let API_KEY = "8722B6BB-6924-87E1-FFD9-53B8C1455200"
     let APPLICATION_ID = "APP_ID"
     let API_KEY = "API_KEY"
     let SERVER_URL = "https://api.backendless.com"
@@ -26,9 +24,13 @@ class ViewController: UIViewController {
         view.endEditing(true)
     }
     
-    func showErrorAlert(_ fault: Fault) {
+    func showErrorAlert(_ fault: Fault, _ exitApp: Bool) {
         let alert = UIAlertController(title: "Error", message: fault.message, preferredStyle: .alert)
-        let dismissButton = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
+        let dismissButton = UIAlertAction(title: "Dismiss", style: .cancel, handler: { action in
+            if (exitApp) {
+                exit(0)
+            }
+        })
         alert.addAction(dismissButton)
         present(alert, animated: true, completion: nil)
     }
@@ -42,23 +44,31 @@ class ViewController: UIViewController {
     }
     
     @IBAction func pressedStartChat(_ sender: Any) {
-        if (!(userNameTextField.text?.isEmpty)!) {
-            userName = userNameTextField.text            
-            self.channel = Backendless.sharedInstance().messaging.subscribe("realtime_example")
-            self.channel?.addJoinListener({
-                self.performSegue(withIdentifier: "ShowChat", sender: nil)
-            }, error: { fault in
-                if (fault?.faultCode == "404") {
-                    self.showErrorAlert(Fault(message: "Make sure to configure the app with your APP ID and API KEY before running the app. \nApplication will be closed"))
+        view.endEditing(true)
+        // just a simple check to find out if Backendless init was successful
+        Backendless.sharedInstance().userService.describeUserClass({ result in
+            DispatchQueue.main.async {
+                if (!(self.userNameTextField.text?.isEmpty)!) {
+                    self.userName = self.userNameTextField.text
+                    self.channel = Backendless.sharedInstance().messaging.subscribe("realtime_example")
+                    self.channel?.addJoinListener({
+                        self.performSegue(withIdentifier: "ShowChat", sender: nil)
+                    }, error: { fault in
+                        self.showErrorAlert(fault!, false)
+                    })
                 }
                 else {
-                    self.showErrorAlert(fault!)
+                    self.showErrorAlert(Fault(message: "Please enter user name"), false)
                 }
-            })
-        }
-        else {
-            showErrorAlert(Fault(message: "Please enter user name"))
-        }
+            }           
+        }, error: { fault in
+            if (fault?.faultCode == "404") {
+                self.showErrorAlert(Fault(message: "Make sure to configure the app with your APP ID and API KEY before running the app. \nApplication will be closed"), true)
+            }
+            else {
+                self.showErrorAlert(fault!, false)
+            }
+        })
     }
 }
 

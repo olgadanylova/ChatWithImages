@@ -202,7 +202,7 @@
                                         <connections>
                                             <outlet property="activityIndicator" destination="apF-yC-g2H" id="V5d-h8-x09"/>
                                             <outlet property="nameLabel" destination="quS-lY-PBQ" id="e2b-UV-6Q5"/>
-                                            <outlet property="pivtureView" destination="1XO-6s-HI8" id="caI-Ar-24W"/>
+                                            <outlet property="pictureView" destination="1XO-6s-HI8" id="caI-Ar-24W"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
