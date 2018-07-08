@@ -47,20 +47,18 @@ class ViewController: UIViewController {
         view.endEditing(true)
         // just a simple check to find out if Backendless init was successful
         Backendless.sharedInstance().userService.describeUserClass({ result in
-            DispatchQueue.main.async {
-                if (!(self.userNameTextField.text?.isEmpty)!) {
-                    self.userName = self.userNameTextField.text
-                    self.channel = Backendless.sharedInstance().messaging.subscribe("realtime_example")
-                    self.channel?.addJoinListener({
-                        self.performSegue(withIdentifier: "ShowChat", sender: nil)
-                    }, error: { fault in
-                        self.showErrorAlert(fault!, false)
-                    })
-                }
-                else {
-                    self.showErrorAlert(Fault(message: "Please enter user name"), false)
-                }
-            }           
+            if (!(self.userNameTextField.text?.isEmpty)!) {
+                self.userName = self.userNameTextField.text
+                self.channel = Backendless.sharedInstance().messaging.subscribe("realtime_example")
+                self.channel?.addJoinListener({
+                    self.performSegue(withIdentifier: "ShowChat", sender: nil)
+                }, error: { fault in
+                    self.showErrorAlert(fault!, false)
+                })
+            }
+            else {
+                self.showErrorAlert(Fault(message: "Please enter user name"), false)
+            }
         }, error: { fault in
             if (fault?.faultCode == "404") {
                 self.showErrorAlert(Fault(message: "Make sure to configure the app with your APP ID and API KEY before running the app. \nApplication will be closed"), true)

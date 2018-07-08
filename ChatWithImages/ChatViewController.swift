@@ -52,11 +52,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             viewFrame.size.height -= keyboardSize.height
             self.view.frame = viewFrame
         })
-        DispatchQueue.main.async {
-            if (self.tableView.numberOfRows(inSection: 0) > 0) {
-                let indexPath = IndexPath(row: self.tableView.numberOfRows(inSection: 0) - 1, section: 0)
-                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-            }
+        if (self.tableView.numberOfRows(inSection: 0) > 0) {
+            let indexPath = IndexPath(row: self.tableView.numberOfRows(inSection: 0) - 1, section: 0)
+            self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
         }
     }
     
