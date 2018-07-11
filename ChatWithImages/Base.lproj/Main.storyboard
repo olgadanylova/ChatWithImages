@@ -22,7 +22,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="User name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="td9-Du-nDO">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Login" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="td9-Du-nDO">
                                 <rect key="frame" x="20" y="94" width="374" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="QV7-Za-Ndi"/>
@@ -50,7 +50,7 @@
                                 </variation>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c5K-q6-Dsj">
-                                <rect key="frame" x="169" y="144" width="76" height="33"/>
+                                <rect key="frame" x="169" y="182" width="76" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Start chat"/>
                                 <variation key="heightClass=regular-widthClass=regular">
@@ -60,17 +60,53 @@
                                     <action selector="pressedStartChat:" destination="BYZ-38-t0r" eventType="touchUpInside" id="kEk-kM-SE2"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="aeB-Rf-5o7">
+                                <rect key="frame" x="20" y="132" width="374" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="BT8-cN-2lh"/>
+                                    <constraint firstAttribute="height" constant="60" id="RoM-CH-VDt"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="RoM-CH-VDt"/>
+                                        <exclude reference="BT8-cN-2lh"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="BT8-cN-2lh"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=regular">
+                                    <fontDescription key="fontDescription" type="system" pointSize="27"/>
+                                    <mask key="constraints">
+                                        <include reference="RoM-CH-VDt"/>
+                                    </mask>
+                                </variation>
+                            </textField>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="cn3-1h-3Nr">
+                                <rect key="frame" x="189" y="225" width="37" height="37"/>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="c5K-q6-Dsj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9t6-tQ-Z2A"/>
-                            <constraint firstItem="c5K-q6-Dsj" firstAttribute="top" secondItem="td9-Du-nDO" secondAttribute="bottom" constant="20" id="LHO-Rs-TF5"/>
+                            <constraint firstAttribute="trailing" secondItem="aeB-Rf-5o7" secondAttribute="trailing" constant="20" id="I8W-y4-ZyA"/>
+                            <constraint firstItem="c5K-q6-Dsj" firstAttribute="top" secondItem="aeB-Rf-5o7" secondAttribute="bottom" constant="20" id="LL7-ZR-NWc"/>
+                            <constraint firstItem="cn3-1h-3Nr" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Oj8-6u-9mS"/>
                             <constraint firstAttribute="right" secondItem="td9-Du-nDO" secondAttribute="right" constant="60" id="S42-mm-OwS"/>
+                            <constraint firstItem="cn3-1h-3Nr" firstAttribute="top" secondItem="c5K-q6-Dsj" secondAttribute="bottom" constant="10" id="U2s-dQ-rVP"/>
                             <constraint firstItem="td9-Du-nDO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="60" id="UPX-EH-KLL"/>
                             <constraint firstAttribute="trailing" secondItem="td9-Du-nDO" secondAttribute="trailing" constant="20" id="W56-zu-31L"/>
                             <constraint firstItem="c5K-q6-Dsj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bOp-tl-Ho6"/>
                             <constraint firstItem="td9-Du-nDO" firstAttribute="top" secondItem="RjU-4v-8C9" secondAttribute="bottom" constant="60" id="dRU-iK-caa"/>
+                            <constraint firstItem="aeB-Rf-5o7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="ge8-qx-ycz"/>
                             <constraint firstItem="td9-Du-nDO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="jYb-EU-ESs"/>
+                            <constraint firstItem="aeB-Rf-5o7" firstAttribute="top" secondItem="td9-Du-nDO" secondAttribute="bottom" constant="8" id="rL7-hY-HLf"/>
                             <constraint firstItem="td9-Du-nDO" firstAttribute="top" secondItem="RjU-4v-8C9" secondAttribute="bottom" constant="30" id="spE-YM-HNv"/>
                         </constraints>
                         <variation key="default">
@@ -104,13 +140,16 @@
                     </view>
                     <navigationItem key="navigationItem" title="Real-time chat" id="iMd-9Q-2Tf"/>
                     <connections>
-                        <outlet property="userNameTextField" destination="td9-Du-nDO" id="OCg-fF-iZW"/>
+                        <outlet property="activityIndicator" destination="cn3-1h-3Nr" id="Ww0-hl-2gF"/>
+                        <outlet property="passwordTextField" destination="aeB-Rf-5o7" id="ptL-Kl-gZr"/>
+                        <outlet property="startChatButton" destination="c5K-q6-Dsj" id="Y7p-HC-rW6"/>
+                        <outlet property="userNameTextField" destination="td9-Du-nDO" id="DON-C0-oam"/>
                         <segue destination="9pk-NE-XKk" kind="show" identifier="ShowChat" id="YrC-1q-f6B"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="941.25" y="-565.14084507042253"/>
+            <point key="canvasLocation" x="940.57971014492762" y="-565.76086956521749"/>
         </scene>
         <!--Chat View Controller-->
         <scene sceneID="YCB-vm-ylC">
@@ -248,12 +287,21 @@
                             <constraint firstItem="6CI-HA-7an" firstAttribute="centerY" secondItem="ew5-7d-Vff" secondAttribute="centerY" id="tIe-CW-BvY"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="gXH-8q-zNn">
+                        <barButtonItem key="leftBarButtonItem" title="Logout" id="zNF-hk-YQd">
+                            <connections>
+                                <action selector="logout:" destination="9pk-NE-XKk" id="unC-1j-IA2"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="messageInputField" destination="ew5-7d-Vff" id="bDi-cc-lkW"/>
                         <outlet property="tableView" destination="2m4-nv-o7s" id="ZS7-zC-Fgz"/>
+                        <segue destination="Np1-t3-yQD" kind="unwind" identifier="unwindToVC" unwindAction="unwindToViewControllerWithSegue:" id="Oxt-5y-WG5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KcX-U2-3EE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Np1-t3-yQD" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1778.2608695652175" y="-565.76086956521749"/>
         </scene>

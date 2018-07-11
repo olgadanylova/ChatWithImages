@@ -7,18 +7,27 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet var messageInputField: UITextField!
     
     var channel: Channel?
-    var userName: String?
+    private var currentUser: BackendlessUser?
+    private var userName: String?
+    private var editMode = false
+    private var editingMessage: ChatMessage?
     private var activeTextField: UITextField?
     private var messages: Array<ChatMessage>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        addMessageListeners()
+        currentUser = Backendless.sharedInstance().userService.currentUser
+        userName = currentUser?.email as String?
+        addListeners()
         messages = Array<ChatMessage>()        
         let message = ChatMessage()
         message.userName = userName
         message.messageText = "joined"
-        Backendless.sharedInstance().messaging.publish(self.channel?.channelName, message: message, response: { messageStatus in
+        Backendless.sharedInstance().data.of(ChatMessage.ofClass()).save(message, response: { savedMessage in
+            Backendless.sharedInstance().messaging.publish(self.channel?.channelName, message: savedMessage, response: { messageStatus in
+            }, error: { fault in
+                self.showErrorAlert(fault!)
+            })
         }, error: { fault in
             self.showErrorAlert(fault!)
         })
@@ -38,6 +47,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        removeListeners()
     }
     
     override func viewDidLayoutSubviews() {
@@ -69,6 +79,13 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         activeTextField = textField
+        if (editMode) {
+            textField.returnKeyType = .done
+        }
+        else {
+            textField.returnKeyType = .send
+        }
+        
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -77,12 +94,26 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if (!(messageInputField.text?.isEmpty)!) {
-            let message = ChatMessage()
-            message.userName = userName
-            message.messageText = messageInputField.text
-            publishMessage(message)
-            messageInputField.text = ""
+        if (!editMode) {
+            if (!(messageInputField.text?.isEmpty)!) {
+                let message = ChatMessage()
+                message.userName = userName
+                message.messageText = messageInputField.text
+                publishMessage(message)
+                messageInputField.text = ""
+            }
+        }
+        else {
+            if (!(messageInputField.text?.isEmpty)!) {
+                editingMessage?.messageText = messageInputField.text
+                Backendless.sharedInstance().data.of(ChatMessage.ofClass()).save(editingMessage, response: { updatedMessage in
+                    self.editingMessage = nil
+                    self.editMode = false
+                }, error: { fault in
+                    self.showErrorAlert(fault!)
+                })
+                messageInputField.text = ""
+            }
         }
         textField.resignFirstResponder()
         return true
@@ -102,11 +133,13 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath) as! MessageCell
             cell.nameLabel.text = String(format: "[%@]:", message.userName!)
             cell.messageLabel.text = message.messageText
+            cell.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(longTapOnTextMessage(_:))))
             return cell
         }
         else if (message.pictureUrl != nil) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "PictureCell", for: indexPath) as! PictureCell
             cell.nameLabel.text = String(format: "[%@]:", message.userName!)
+            cell.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(longTapOnPicture(_:))))
             if (message.picture != nil) {
                 cell.pictureView.image = message.picture
             }
@@ -134,7 +167,76 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         return UITableViewCell()
     }
     
-    func addMessageListeners() {
+    @IBAction func longTapOnTextMessage(_ sender: UIGestureRecognizer) {
+        if sender.state == .ended {
+            let touch = sender.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touch) {
+                let message = messages![indexPath.row]
+                if (message.ownerId == currentUser?.objectId as String? ) {
+                    let alert = UIAlertController(title: "\(message.messageText ?? "")", message: nil, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { alertAction in
+                        self.editMode = true
+                        self.editingMessage = message
+                        self.messageInputField.text = message.messageText
+                        self.messageInputField.becomeFirstResponder()
+                    }))
+                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { alertAction in
+                        let confirmAlert = UIAlertController(title: "Delete", message: "Are you sure you want to delete this message?", preferredStyle: .alert)
+                        confirmAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { alertAction in
+                            Backendless.sharedInstance().data.of(ChatMessage.ofClass()).remove(byId:message.objectId, response: { removed in
+                            }, error: { fault in
+                                self.showErrorAlert(fault!)
+                            })
+                        }))
+                        confirmAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+                        self.present(confirmAlert, animated: true)
+                    }))
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+    
+    @IBAction func longTapOnPicture(_ sender: UIGestureRecognizer){
+        if sender.state == .ended {
+            let touch = sender.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touch) {
+                let message = messages![indexPath.row]
+                let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+                if (message.ownerId == currentUser?.objectId as String? ) {
+                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { alertAction in
+                        let confirmAlert = UIAlertController(title: "Delete", message: "Are you sure you want to delete this message?", preferredStyle: .alert)
+                        confirmAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { alertAction in
+                            Backendless.sharedInstance().data.of(ChatMessage.ofClass()).remove(byId:message.objectId, response: { removed in
+                            }, error: { fault in
+                                self.showErrorAlert(fault!)
+                            })
+                        }))
+                        confirmAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+                        self.present(confirmAlert, animated: true)
+                    }))
+                }
+                alert.addAction(UIAlertAction(title: "Save to gallery", style: .default, handler: { action in
+                    UIImageWriteToSavedPhotosAlbum(message.picture!, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            showErrorAlert(Fault(message: error.localizedDescription))
+        } else {
+            let alert = UIAlertController(title: "Saved", message: "Image has been saved to your photos", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
+    }
+    
+    func addListeners() {
         channel?.addMessageListenerCustomObject({ receivedMessage in
             if let message = receivedMessage as? ChatMessage {
                 self.messages?.append(message)
@@ -143,13 +245,43 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }, error: { fault in
             self.showErrorAlert(fault!)
         }, class: ChatMessage.ofClass())
-    }
-    
-    func publishMessage(_ message: ChatMessage) {
-        Backendless.sharedInstance().messaging.publish(channel?.channelName, message: message, response: { messageStatus in
+        
+        Backendless.sharedInstance().data.of(ChatMessage.ofClass()).rt.addUpdateListener({ updatedMessage in
+            if let message = self.messages?.filter({$0.objectId == (updatedMessage as! ChatMessage).objectId}).first {
+                let index = self.messages?.index(of: message)
+                self.messages![index!] = updatedMessage as! ChatMessage
+                self.tableView.reloadData()
+            }
         }, error: { fault in
             self.showErrorAlert(fault!)
         })
+        
+        Backendless.sharedInstance().data.of(ChatMessage.ofClass()).rt.addDeleteListener({ deletedMessage in
+            if let message = self.messages?.filter({$0.objectId == (deletedMessage as! ChatMessage).objectId}).first {
+                let index = self.messages?.index(of: message)
+                self.messages?.remove(at: index!)
+                self.tableView.reloadData()
+            }
+        }, error: { fault in
+            self.showErrorAlert(fault!)
+        })
+    }
+    
+    func removeListeners() {
+        channel?.removeAllListeners()
+        Backendless.sharedInstance().data.of(ChatMessage.ofClass()).rt.removeAllListeners()
+    }
+    
+    func publishMessage(_ message: ChatMessage) {
+        Backendless.sharedInstance().data.of(ChatMessage.ofClass()).save(message, response: { savedMessage in
+            Backendless.sharedInstance().messaging.publish(self.channel?.channelName, message: savedMessage, response: { messageStatus in
+            }, error: { fault in
+                self.showErrorAlert(fault!)
+            })
+        }, error: { fault in
+            self.showErrorAlert(fault!)
+        })
+        
     }
     
     func showErrorAlert(_ fault: Fault) {
@@ -208,5 +340,13 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBAction func attachFile(_ sender: Any) {
         view.endEditing(true)
         showImagePicker()
+    }
+    
+    @IBAction func logout(_ sender: Any) {
+        Backendless.sharedInstance().userService.logout({
+            self.performSegue(withIdentifier: "unwindToVC", sender: nil)
+        }, error: { fault in
+            self.showErrorAlert(fault!)
+        })
     }
 }
