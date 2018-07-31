@@ -23,11 +23,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         let message = ChatMessage()
         message.userName = userName
         message.messageText = "joined"
-        Backendless.sharedInstance().data.of(ChatMessage.ofClass()).save(message, response: { savedMessage in
-            Backendless.sharedInstance().messaging.publish(self.channel?.channelName, message: savedMessage, response: { messageStatus in
-            }, error: { fault in
-                self.showErrorAlert(fault!)
-            })
+        Backendless.sharedInstance().messaging.publish(self.channel?.channelName, message: message, response: { messageStatus in
         }, error: { fault in
             self.showErrorAlert(fault!)
         })
