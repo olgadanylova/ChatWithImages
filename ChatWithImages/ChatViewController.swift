@@ -16,9 +16,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addListeners()
         currentUser = Backendless.sharedInstance().userService.currentUser
         userName = currentUser?.email as String?
-        addListeners()
         messages = Array<ChatMessage>()        
         let message = ChatMessage()
         message.userName = userName
@@ -43,7 +43,6 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
-        removeListeners()
     }
     
     override func viewDidLayoutSubviews() {
@@ -340,6 +339,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBAction func logout(_ sender: Any) {
         Backendless.sharedInstance().userService.logout({
+            self.removeListeners()
             self.performSegue(withIdentifier: "unwindToVC", sender: nil)
         }, error: { fault in
             self.showErrorAlert(fault!)
