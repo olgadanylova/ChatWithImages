@@ -318,18 +318,22 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        let image = info[UIImagePickerControllerOriginalImage] as? UIImage
-        let img = UIImage(cgImage: (image?.cgImage)!, scale: CGFloat(1.0), orientation: .right)
-        let imagePath = String(format: "tmpChatFiles/%@.png", UUID().uuidString)
-        Backendless.sharedInstance().file.uploadFile(imagePath, content: UIImagePNGRepresentation(img), response: { uploadedPicture in
-            let message = ChatMessage()
-            message.userName = self.userName
-            message.pictureUrl = uploadedPicture?.fileURL
-            self.publishMessage(message)
-        }, error: { fault in
-            self.showErrorAlert(fault!)
-        })
         dismiss(animated: true, completion: nil)
+        let alert = UIAlertController(title: "Image has been sent", message: "It will appear in the chat as soon as it is uploaded in Backendless", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { alertAction in
+            let image = info[UIImagePickerControllerOriginalImage] as? UIImage
+            let img = UIImage(cgImage: (image?.cgImage)!, scale: CGFloat(1.0), orientation: .right)
+            let imagePath = String(format: "tmpChatFiles/%@.png", UUID().uuidString)
+            Backendless.sharedInstance().file.uploadFile(imagePath, content: UIImagePNGRepresentation(img), response: { uploadedPicture in
+                let message = ChatMessage()
+                message.userName = self.userName
+                message.pictureUrl = uploadedPicture?.fileURL
+                self.publishMessage(message)
+            }, error: { fault in
+                self.showErrorAlert(fault!)
+            })
+        }))
+        self.present(alert, animated: true)
     }
     
     @IBAction func attachFile(_ sender: Any) {
