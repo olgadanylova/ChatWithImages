@@ -8,8 +8,8 @@ class ViewController: UIViewController {
     @IBOutlet var startChatButton: UIButton!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!    
     
-    let APPLICATION_ID = "APP_ID"
-    let API_KEY = "API_KEY"
+    let APPLICATION_ID = "EEE9F1BF-2820-7143-FF1A-C812061E2400"
+    let API_KEY = "E1043F31-7C0C-F349-FF9F-2A836F16BA00"
     let SERVER_URL = "https://api.backendless.com"
     
     var userName: String?

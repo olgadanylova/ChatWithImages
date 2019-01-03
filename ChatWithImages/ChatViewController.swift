@@ -35,14 +35,14 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationItem.title = userName
         navigationItem.hidesBackButton = true
         navigationItem.backBarButtonItem = nil
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(_:)), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(_:)), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewDidLayoutSubviews() {
@@ -50,7 +50,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc func keyboardDidShow(_ notification: NSNotification) {
-        let infoValue = notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
+        let infoValue = notification.userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue
         let keyboardSize = infoValue.cgRectValue.size
         UIView.animate(withDuration: 0.3, animations: {
             var viewFrame = self.view.frame
@@ -124,6 +124,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = self.messages![indexPath.row]
+        
         if (message.messageText != nil) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell", for: indexPath) as! MessageCell
             cell.nameLabel.text = String(format: "[%@]:", message.userName!)
@@ -143,20 +144,17 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                 cell.activityIndicator.isHidden = false
                 cell.activityIndicator.startAnimating()
                 let url = URL(string: message.pictureUrl!)!
-                let session = URLSession(configuration: .default)
-                let downloadPictureTask = session.dataTask(with: url) { (data, response, error) in
-                    if let imageData = data {
-                        let image = UIImage(data: imageData)
-                        message.picture = image
+                
+                DispatchQueue.global().async {
+                    if let data = try? Data(contentsOf: url) {
                         DispatchQueue.main.async {
-                            cell.pictureView.image = image
+                            cell.pictureView.image = UIImage(data: data)
                             cell.activityIndicator.isHidden = true
                             cell.activityIndicator.stopAnimating()
                         }
                     }
                 }
-                downloadPictureTask.resume()
-            }      
+            }
             return cell
         }
         return UITableViewCell()
@@ -213,7 +211,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
                     }))
                 }
                 alert.addAction(UIAlertAction(title: "Save to gallery", style: .default, handler: { action in
-                    UIImageWriteToSavedPhotosAlbum(message.picture!, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+                    if message.picture != nil {
+                        UIImageWriteToSavedPhotosAlbum(message.picture!, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
+                    }                    
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                 self.present(alert, animated: true)
@@ -317,14 +317,16 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         dismiss(animated: true, completion: nil)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // Local variable inserted by Swift 4.2 migrator.
+        let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         dismiss(animated: true, completion: nil)
         let alert = UIAlertController(title: "Image has been sent", message: "It will appear in the chat as soon as it is uploaded in Backendless", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { alertAction in
-            let image = info[UIImagePickerControllerOriginalImage] as? UIImage
+            let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
             let img = UIImage(cgImage: (image?.cgImage)!, scale: CGFloat(1.0), orientation: .right)
             let imagePath = String(format: "tmpChatFiles/%@.png", UUID().uuidString)
-            Backendless.sharedInstance().file.uploadFile(imagePath, content: UIImagePNGRepresentation(img), response: { uploadedPicture in
+            Backendless.sharedInstance().file.uploadFile(imagePath, content: img.pngData(), response: { uploadedPicture in
                 let message = ChatMessage()
                 message.userName = self.userName
                 message.pictureUrl = uploadedPicture?.fileURL
@@ -349,4 +351,14 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             self.showErrorAlert(fault!)
         })
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+    return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
+    return input.rawValue
 }
